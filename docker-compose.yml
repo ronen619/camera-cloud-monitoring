@@ -1,0 +1,11 @@
+services:
+  my-db:
+    image: redis:latest
+    restart: always
+
+  my-python-app:
+    build: .
+    ports:
+      - "9000:5000"  # אנחנו מחברים את פורט 9000 במחשב לשרת הפייתון (5000)
+    depends_on:
+      - my-db
