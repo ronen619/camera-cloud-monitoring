@@ -3,7 +3,7 @@
 A multi-service monitoring application built to simulate real-time camera data ingestion and visualization. This project demonstrates high-availability deployment, container orchestration, and cloud infrastructure management.
 
 ## 🚀 Live Demo
-**[Insert Your Cloud IP here, e.g., http://10.208.0.2:9000]**
+**[Insert Your Cloud IP here, e.g., http://34.165.24.21:9000]**
 *(Note: Instance may be paused to save costs)*
 
 ## 🛠 Tech Stack
