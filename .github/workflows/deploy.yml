@@ -1,0 +1,24 @@
+name: Deploy to Google Cloud
+
+on:
+  push:
+    branches:
+      - main  # ה-Pipeline ירוץ בכל פעם שתעשה Push לענף הראשי
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }} # מיד נגדיר גם את זה
+          username: ronen # שם המשתמש שלך בשרת
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/camera_project
+            git pull origin main
+            sudo docker-compose up -d --build
