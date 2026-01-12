@@ -1,11 +1,30 @@
-services:
-  my-db:
-    image: redis:latest
-    restart: always
+version: '3.8'
 
-  my-python-app:
+services:
+  # השירות של האתר (הדשבורד)
+  web:
     build: .
+    command: python app.py
     ports:
-      - "9000:5000"  # אנחנו מחברים את פורט 9000 במחשב לשרת הפייתון (5000)
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHAT_ID=${CHAT_ID}
     depends_on:
       - my-db
+
+  # השירות החדש של הבוט
+  bot:
+    build: .
+    command: python bot.py
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHAT_ID=${CHAT_ID}
+    depends_on:
+      - my-db
+
+  # מסד הנתונים ששניהם משתמשים בו
+  my-db:
+    image: redis:alpine
