@@ -5,18 +5,19 @@ services:
   web:
     build: .
     command: python app.py
-    ports:
-      - "5000:5000"
     volumes:
       - .:/app
+    working_dir: /app
+    ports:
+      - "5000:5000"
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - CHAT_ID=${CHAT_ID}
     depends_on:
       - my-db
 
-  # השירות החדש של הבוט
- bot:
+  # השירות החדש של הבוט בטלגרם
+  bot:
     build: .
     command: python bot.py
     volumes:
