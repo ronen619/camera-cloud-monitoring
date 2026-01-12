@@ -19,6 +19,9 @@ services:
   bot:
     build: .
     command: python bot.py
+    volumes:
+      - .:/app
+      working_dir: /app
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - CHAT_ID=${CHAT_ID}
