@@ -2,24 +2,52 @@ import os
 import telebot
 import redis
 import time
+from telebot import types  # <--- זה הכלי שיוצר את הכפתורים
 
-# הגדרות חיבור (שים לב ל-host שתואם לשלך)
+# הגדרות חיבור
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(TOKEN)
 r = redis.Redis(host='my-db', port=6379, decode_responses=True)
 
-@bot.message_handler(commands=['status'])
-def send_status(message):
+# 1. פקודת ההתחלה - יוצרת את הכפתורים
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    # יצירת לוח המקשים
+    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    
+    # הגדרת הכפתורים
+    btn_status = types.KeyboardButton('📊 סטטוס מערכת')
+    btn_reset = types.KeyboardButton('🔄 איפוס מונה')
+    
+    # הוספת הכפתורים ללוח
+    markup.add(btn_status, btn_reset)
+    
+    bot.reply_to(message, "אהלן רונן! אני מוכן. בחר פעולה מהתפריט למטה:", reply_markup=markup)
+
+# 2. טיפול בלחיצה על "סטטוס מערכת"
+@bot.message_handler(func=lambda message: message.text == '📊 סטטוס מערכת')
+def status_btn_handler(message):
     try:
-        # מושך את אותו המונה שהאתר שלך משתמש בו
         count = r.get('camera_samples') or 0
         timestamp = time.strftime('%H:%M:%S')
-        text = f"📊 *סטטוס מערכת מהענן*\n" \
-               f"מספר דגימות ב-Redis: {count}\n" \
-               f"זמן עדכון: {timestamp}"
+        text = f"📊 *סטטוס מצלמות*\nדגימות ב-Redis: {count}\nזמן: {timestamp}"
         bot.reply_to(message, text, parse_mode='Markdown')
     except Exception as e:
-        bot.reply_to(message, f"שגיאה: {e}")
+        bot.reply_to(message, f"שגיאה בשליפת נתונים: {e}")
 
-print("Bot is starting...")
+# 3. טיפול בלחיצה על "איפוס מונה" (בונוס!)
+@bot.message_handler(func=lambda message: message.text == '🔄 איפוס מונה')
+def reset_btn_handler(message):
+    try:
+        r.set('camera_samples', 0)
+        bot.reply_to(message, "✅ המונה אופס בהצלחה ל-0!")
+    except Exception as e:
+        bot.reply_to(message, f"שגיאה באיפוס: {e}")
+
+# הפקודה הישנה לגיבוי
+@bot.message_handler(commands=['status'])
+def send_status_cmd(message):
+    status_btn_handler(message)
+
+print("Bot with Remote Control buttons is starting...")
 bot.infinity_polling()
