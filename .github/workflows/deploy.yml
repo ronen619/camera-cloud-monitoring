@@ -21,4 +21,6 @@ jobs:
           script: |
             cd ~/camera_project
             git pull origin main
+            echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" > .env
+            echo "CHAT_ID=${{ secrets.CHAT_ID }}" >> .env
             docker compose up -d --build
