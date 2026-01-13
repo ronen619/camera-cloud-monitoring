@@ -29,14 +29,14 @@ services:
     depends_on:
       - my-db
 
-
+ 
  simulator:  
-    build: .
-    command: python simulator.py
-    volumes:
+       build: .
+     command: python simulator.py
+     volumes:
       - .:/app
     working_dir: /app
-    depends_on:
+   depends_on:
       - my-db
   # מסד הנתונים ששניהם משתמשים בו
   my-db:
