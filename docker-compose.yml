@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # השירות של האתר (הדשבורד)
   web:
     build: .
     command: python app.py
@@ -11,12 +8,11 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - TELEGRAM_TOKEN=8332723549:AAHDda8VLo_RrBW5jeokcEntUB8J0t0b9CI
-      - CHAT_ID=770737566
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHAT_ID=${CHAT_ID}
     depends_on:
       - my-db
 
-  # השירות החדש של הבוט בטלגרם
   bot:
     build: .
     command: python bot.py
@@ -24,20 +20,19 @@ services:
       - .:/app
     working_dir: /app
     environment:
-      - TELEGRAM_TOKEN=8332723549:AAHDda8VLo_RrBW5jeokcEntUB8J0t0b9CI
-      - CHAT_ID=770737566
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - CHAT_ID=${CHAT_ID}
     depends_on:
       - my-db
 
- 
-  simulator:  
-    build: . 
+  simulator:
+    build: .
     command: python simulator.py
     volumes:
       - .:/app
     working_dir: /app
     depends_on:
       - my-db
-  # מסד הנתונים ששניהם משתמשים בו
+
   my-db:
     image: redis:alpine
