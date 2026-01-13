@@ -13,7 +13,7 @@ while True:
         print(f"Background detection simulated! Current count: {count}")
         
         # מחכה 5 שניות בין דגימה לדגימה
-        time.sleep(5) 
+        time.sleep(1) 
     except Exception as e:
         print(f"Error in simulator: {e}")
         time.sleep(10)
