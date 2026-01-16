@@ -66,3 +66,10 @@ except Exception as e:
 
 print("Bot with Remote Control buttons is starting...")
 bot.infinity_polling(skip_pending=True)
+
+print("Bot is starting to poll...")
+try:
+    # שימוש ב-polling פשוט עם העלאת שגיאות (none_stop=True)
+    bot.polling(none_stop=True, interval=0, timeout=20)
+except Exception as e:
+    print(f"CRITICAL ERROR during polling: {e}")
