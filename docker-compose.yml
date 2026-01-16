@@ -36,3 +36,8 @@ services:
 
   my-db:
     image: redis:alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
