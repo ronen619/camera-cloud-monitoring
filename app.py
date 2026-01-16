@@ -60,7 +60,9 @@ def index():
 @app.route('/get_data')
 def get_data():
     # כאן אנחנו מקדמים את המונה ומחזירים JSON
-    count = r.incr('camera_samples')
+    count = r.get('camera_samples')
+    if count is None:
+        count = 0
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
     return jsonify(count=count, time=current_time)
 
