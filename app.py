@@ -41,7 +41,7 @@ def index():
             }
 
             // הפעלה כל 2 שניות
-            setInterval(updateData, 2000);
+            setInterval(updateData, 1000);
         </script>
     </head>
     <body>
