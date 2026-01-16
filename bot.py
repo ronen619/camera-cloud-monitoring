@@ -7,7 +7,7 @@ from telebot import types  # <--- זה הכלי שיוצר את הכפתורים
 # הגדרות חיבור
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(TOKEN)
-r = redis.Redis(host='my-db', port=6379, decode_responses=True)
+r = redis.Redis(host='my-db', port=6379, decode_responses=True, socket_connect_timeout=5)
 
 # 1. פקודת ההתחלה - יוצרת את הכפתורים
 @bot.message_handler(commands=['start'])
