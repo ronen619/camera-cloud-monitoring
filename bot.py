@@ -45,9 +45,15 @@ def reset_btn_handler(message):
         bot.reply_to(message, f"שגיאה באיפוס: {e}")
 
 # הפקודה הישנה לגיבוי
-@bot.message_handler(commands=['status'])
-def send_status_cmd(message):
-    status_btn_handler(message)
+# @bot.message_handler(commands=['status'])
+# def send_status_cmd(message):
+#    status_btn_handler(message)
+
+# 4. פונקציית הדיבאג החדשה - שתולה כאן! 
+# היא תדפיס ללוג כל הודעה שלא נתפסה למעלה
+@bot.message_handler(func=lambda message: True)
+def debug_all_messages(message):
+    print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
 
 print("Bot with Remote Control buttons is starting...")
 bot.infinity_polling()
