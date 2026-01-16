@@ -55,5 +55,14 @@ def reset_btn_handler(message):
 def debug_all_messages(message):
     print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
 
+print("Checking connection to Telegram...")
+try:
+    # ניסיון למשוך את פרטי הבוט משרתי טלגרם
+    info = bot.get_me()
+    print(f"Success! Bot is online: @{info.username}")
+except Exception as e:
+    # אם הטוקן שגוי או שיש חסימה, זה יודפס כאן
+    print(f"ERROR: Connection failed: {e}")
+
 print("Bot with Remote Control buttons is starting...")
 bot.infinity_polling()
