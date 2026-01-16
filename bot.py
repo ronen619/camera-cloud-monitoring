@@ -65,4 +65,4 @@ except Exception as e:
     print(f"ERROR: Connection failed: {e}")
 
 print("Bot with Remote Control buttons is starting...")
-bot.infinity_polling()
+bot.infinity_polling(skip_pending=True)
