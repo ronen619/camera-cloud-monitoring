@@ -7,8 +7,14 @@ from telebot import types  # <--- זה הכלי שיוצר את הכפתורים
 # הגדרות חיבור
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(TOKEN)
-r = redis.Redis(host='my-db', port=6379, decode_responses=True, socket_connect_timeout=5)
+r = redis.Redis(host='my-db', port=6379, decode_responses=True, socket_connect_timeout=1, socket_timeout=1)
 
+try:
+    r.ping()
+    print("✅ Successfully connected to Redis")
+except Exception as e:
+    print(f"⚠️ Redis connection failed, but bot will continue: {e}")
+    
 # 1. פקודת ההתחלה - יוצרת את הכפתורים
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -65,7 +71,9 @@ except Exception as e:
     print(f"ERROR: Connection failed: {e}")
 
 print("Bot with Remote Control buttons is starting...")
-bot.infinity_polling(skip_pending=True)
+bot.polling(none_stop=True, interval=0, timeout=20)
+
+#bot.infinity_polling(skip_pending=True)
 
 print("Bot is starting to poll...")
 try:
