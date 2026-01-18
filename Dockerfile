@@ -1,5 +1,7 @@
 FROM python:3.9-slim
 
+ENV PYTHONUNBUFFERED=1
+
 # יצירת תיקייה עבור הפרויקט בתוך המכולה
 WORKDIR /app
 

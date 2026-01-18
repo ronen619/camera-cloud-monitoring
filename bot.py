@@ -59,7 +59,9 @@ def reset_btn_handler(message):
 # היא תדפיס ללוג כל הודעה שלא נתפסה למעלה
 @bot.message_handler(func=lambda message: True)
 def debug_all_messages(message):
-    print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
+    print(f"DEBUG: Received message: {message.text}", flush=True)
+    #print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
+
 
 print("Checking connection to Telegram...")
 try:
