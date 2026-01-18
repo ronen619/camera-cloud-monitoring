@@ -50,17 +50,53 @@ def reset_btn_handler(message):
     except Exception as e:
         bot.reply_to(message, f"שגיאה באיפוס: {e}")
 
-# הפקודה הישנה לגיבוי
-# @bot.message_handler(commands=['status'])
-# def send_status_cmd(message):
-#    status_btn_handler(message)
-
 # 4. פונקציית הדיבאג החדשה - שתולה כאן! 
 # היא תדפיס ללוג כל הודעה שלא נתפסה למעלה
 @bot.message_handler(func=lambda message: True)
 def debug_all_messages(message):
     print(f"DEBUG: Received message: {message.text}", flush=True)
-    #print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
+   
+import threading
+
+# פונקציה שרצה ברקע ובודקת את Redis
+def monitor_redis_changes():
+    # הגדרת ה-ID שלך (מהלוגים המוקדמים)
+    MY_CHAT_ID = 770737566 
+    
+    # אתחול המונה האחרון שהכרנו
+    try:
+        last_count = int(r.get('camera_samples') or 0)
+    except:
+        last_count = 0
+        
+    print(f"📢 Monitoring thread started. Initial count: {last_count}", flush=True)
+
+    while True:
+        try:
+            # שליפת המונה הנוכחי
+            current_count = int(r.get('camera_samples') or 0)
+
+            # אם המונה גדל - יש דגימה חדשה!
+            if current_count > last_count:
+                diff = current_count - last_count
+                message = f"📸 *התראה: זוהתה דגימה חדשה!*\nמספר דגימות נוספות: {diff}\nסה''כ ב-Redis: {current_count}"
+                
+                # שליחת הודעה יזומה מהבוט אליך
+                bot.send_message(MY_CHAT_ID, message, parse_mode='Markdown')
+                
+                # עדכון המונה האחרון
+                last_count = current_count
+            
+            # המתנה של 5 שניות בין בדיקה לבדיקה
+            time.sleep(5)
+            
+        except Exception as e:
+            print(f"⚠️ Monitor Error: {e}", flush=True)
+            time.sleep(10)
+
+# הפעלת התהליך ברקע לפני שמתחילים את ה-Polling
+monitor_thread = threading.Thread(target=monitor_redis_changes, daemon=True)
+monitor_thread.start()
 
 
 # בדיקת חיבור לפני שמתחילים
