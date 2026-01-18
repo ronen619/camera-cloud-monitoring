@@ -63,23 +63,19 @@ def debug_all_messages(message):
     #print(f"DEBUG: Received message: '{message.text}' from user {message.from_user.id}")
 
 
-print("Checking connection to Telegram...")
+# בדיקת חיבור לפני שמתחילים
+print("Checking connection to Telegram...", flush=True)
 try:
-    # ניסיון למשוך את פרטי הבוט משרתי טלגרם
     info = bot.get_me()
-    print(f"Success! Bot is online: @{info.username}")
+    print(f"✅ Success! Bot is online: @{info.username}", flush=True)
 except Exception as e:
-    # אם הטוקן שגוי או שיש חסימה, זה יודפס כאן
-    print(f"ERROR: Connection failed: {e}")
+    print(f"❌ ERROR: Connection failed: {e}", flush=True)
 
-print("Bot with Remote Control buttons is starting...")
-bot.polling(none_stop=True, interval=0, timeout=20)
+print("🚀 Bot is starting to poll now...", flush=True)
 
-#bot.infinity_polling(skip_pending=True)
-
-print("Bot is starting to poll...")
 try:
-    # שימוש ב-polling פשוט עם העלאת שגיאות (none_stop=True)
-    bot.polling(none_stop=True, interval=0, timeout=20)
+    # infinity_polling דואג שהבוט ינסה להתחבר מחדש גם אם יש שגיאת רשת
+    # skip_pending=True יגרום לבוט להתעלם מכל הודעות העבר ה"תקועות" ולהגיב רק להודעות חדשות מהרגע הזה
+    bot.infinity_polling(skip_pending=True)
 except Exception as e:
-    print(f"CRITICAL ERROR during polling: {e}")
+    print(f"⚠️ CRITICAL ERROR: {e}", flush=True)
