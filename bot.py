@@ -5,7 +5,7 @@ import time
 import threading
 from telebot import types
 
-# הגדרות חיבור - הגדלנו מעט את ה-Timeout ליציבות
+# הגדרות חיבור
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(TOKEN)
 r = redis.Redis(host='my-db', port=6379, decode_responses=True, socket_connect_timeout=5, socket_timeout=5)
@@ -23,7 +23,11 @@ def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     btn_status = types.KeyboardButton('📊 סטטוס מערכת')
     btn_reset = types.KeyboardButton('🔄 איפוס מונה')
-    markup.add(btn_status, btn_reset)
+    # --- עדכון 2.א: הוספת הכפתור החדש ---
+    btn_history = types.KeyboardButton('📋 5 דגימות אחרונות')
+    
+    # הוספת שלושת הכפתורים לממשק
+    markup.add(btn_status, btn_reset, btn_history)
     bot.reply_to(message, "אהלן רונן! אני מוכן. בחר פעולה מהתפריט למטה:", reply_markup=markup)
 
 @bot.message_handler(func=lambda message: message.text == '📊 סטטוס מערכת')
@@ -40,9 +44,30 @@ def status_btn_handler(message):
 def reset_btn_handler(message):
     try:
         r.set('camera_samples', 0)
-        bot.reply_to(message, "✅ המונה אופס בהצלחה ל-0!")
+        # איפוס גם של רשימת ההיסטוריה ב-Redis
+        r.delete('camera_history')
+        bot.reply_to(message, "✅ המונה וההיסטוריה אופסו בהצלחה ל-0!")
     except Exception as e:
         bot.reply_to(message, f"שגיאה באיפוס: {e}")
+
+# --- עדכון 2.ב: הוספת ה-Handler של ההיסטוריה ---
+@bot.message_handler(func=lambda message: message.text == '📋 5 דגימות אחרונות')
+def history_btn_handler(message):
+    try:
+        # שליפת 5 האיברים האחרונים שהסימולטור הכניס לרשימה
+        history = r.lrange('camera_history', 0, 4)
+        
+        if not history:
+            bot.reply_to(message, "אין עדיין דגימות רשומות בהיסטוריה.")
+            return
+
+        text = "📸 *היסטוריית דגימות אחרונות:*\n\n"
+        for i, ts in enumerate(history, 1):
+            text += f"{i}. 🕒 `{ts}`\n"
+            
+        bot.reply_to(message, text, parse_mode='Markdown')
+    except Exception as e:
+        bot.reply_to(message, f"שגיאה בשליפת היסטוריה: {e}")
 
 @bot.message_handler(func=lambda message: True)
 def debug_all_messages(message):

@@ -10,7 +10,14 @@ while True:
     try:
         # קידום המונה ב-1 בכל פעם
         count = r.incr('camera_samples')
-        print(f"Background detection simulated! Current count: {count}")
+        
+        # --- תוספת חדשה: רישום היסטוריה ---
+        timestamp = time.strftime('%d/%m %H:%M:%S')
+        r.lpush('camera_history', timestamp) # דוחף את הזמן לראש הרשימה
+        r.ltrim('camera_history', 0, 9)      # שומר רק את ה-10 האחרונים כדי לא להעמיס
+        # ----------------------------------
+        
+        print(f"Background detection simulated! Current count: {count} at {timestamp}")
         
         # מחכה 5 שניות בין דגימה לדגימה
         time.sleep(5) 
