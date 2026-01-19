@@ -24,7 +24,7 @@ def send_welcome(message):
     btn_status = types.KeyboardButton('📊 סטטוס מערכת')
     btn_reset = types.KeyboardButton('🔄 איפוס מונה')
     # --- עדכון 2.א: הוספת הכפתור החדש ---
-    btn_history = types.KeyboardButton('📋 5 דגימות אחרונות')
+    btn_history = types.KeyboardButton('📋 10 דגימות אחרונות')
     
     # הוספת שלושת הכפתורים לממשק
     markup.add(btn_status, btn_reset, btn_history)
@@ -51,11 +51,11 @@ def reset_btn_handler(message):
         bot.reply_to(message, f"שגיאה באיפוס: {e}")
 
 # --- עדכון 2.ב: הוספת ה-Handler של ההיסטוריה ---
-@bot.message_handler(func=lambda message: message.text == '📋 5 דגימות אחרונות')
+@bot.message_handler(func=lambda message: message.text == '📋 10 דגימות אחרונות')
 def history_btn_handler(message):
     try:
         # שליפת 5 האיברים האחרונים שהסימולטור הכניס לרשימה
-        history = r.lrange('camera_history', 0, 4)
+        history = r.lrange('camera_history', 0, 9)
         
         if not history:
             bot.reply_to(message, "אין עדיין דגימות רשומות בהיסטוריה.")
@@ -77,8 +77,8 @@ def debug_all_messages(message):
 
 def monitor_redis_changes():
     MY_CHAT_ID = 770737566 
-    THRESHOLD = 10 
-    INTERVAL = 30 # בדיקה כל חצי דקה כדי לראות תוצאות מהר יותר
+    THRESHOLD = 200 
+    INTERVAL = 60 # בדיקה כל חצי דקה כדי לראות תוצאות מהר יותר
     
     try:
         last_count = int(r.get('camera_samples') or 0)
