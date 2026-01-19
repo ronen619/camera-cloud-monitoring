@@ -78,21 +78,25 @@ def debug_all_messages(message):
 def monitor_redis_changes():
     MY_CHAT_ID = 770737566 
     THRESHOLD = 10 
-    INTERVAL = 60 
+    INTERVAL = 30 # בדיקה כל חצי דקה כדי לראות תוצאות מהר יותר
     
     try:
         last_count = int(r.get('camera_samples') or 0)
     except:
         last_count = 0
         
-    print(f"📢 Monitor updated: Alert every {THRESHOLD} samples, checking every {INTERVAL}s", flush=True)
+    print(f"📢 MONITOR START: Initial count is {last_count}. Waiting for {last_count + THRESHOLD}...", flush=True)
 
     while True:
         try:
             current_count = int(r.get('camera_samples') or 0)
             diff = current_count - last_count
+            
+            # השורה הזו היא ה"עיניים" שלנו בתוך הטרמינל
+            print(f"🔍 [DEBUG] Current: {current_count}, Last: {last_count}, Diff: {diff} (Target: {THRESHOLD})", flush=True)
 
             if diff >= THRESHOLD:
+                print(f"🔔 THRESHOLD REACHED! Sending message to {MY_CHAT_ID}", flush=True)
                 message = f"🔔 *סיכום דגימות חדשות*\nנוספו: {diff} דגימות\nסה''כ בשרת: {current_count}"
                 bot.send_message(MY_CHAT_ID, message, parse_mode='Markdown')
                 last_count = current_count
@@ -100,7 +104,7 @@ def monitor_redis_changes():
             time.sleep(INTERVAL) 
         except Exception as e:
             print(f"⚠️ Monitor Error: {e}", flush=True)
-            time.sleep(20)
+            time.sleep(10)
 
 # --- Startup ---
 
