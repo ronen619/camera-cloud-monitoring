@@ -109,3 +109,17 @@ def monitor_redis_changes():
         except Exception as e:
             print(f"⚠️ Monitor Error: {e}", flush=True)
             time.sleep(20)
+
+            # וודא שהשורות האלו מופיעות בסוף הקובץ bot.py:
+
+# הפעלת תהליך הניטור (ההתראות) ברקע
+print("🚀 Starting Background Monitor...", flush=True)
+monitor_thread = threading.Thread(target=monitor_redis_changes, daemon=True)
+monitor_thread.start()
+
+# הפעלת ההאזנה להודעות בטלגרם (הכפתורים)
+print("🚀 Starting Bot Polling...", flush=True)
+try:
+    bot.infinity_polling(skip_pending=True)
+except Exception as e:
+    print(f"❌ Polling crashed: {e}", flush=True)
