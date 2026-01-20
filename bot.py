@@ -77,43 +77,35 @@ def debug_all_messages(message):
 
 def monitor_redis_changes():
     MY_CHAT_ID = 770737566 
-    THRESHOLD = 200 
-    INTERVAL = 60 # בדיקה כל חצי דקה כדי לראות תוצאות מהר יותר
+    THRESHOLD = 200  # <--- העדכון שביקשת (התראה כל 200)
+    INTERVAL = 60    # בדיקה פעם בדקה
     
     try:
+        # קריאת המצב הנוכחי ב-Redis ברגע שהבוט עולה
         last_count = int(r.get('camera_samples') or 0)
     except:
         last_count = 0
         
-    print(f"📢 MONITOR START: Initial count is {last_count}. Waiting for {last_count + THRESHOLD}...", flush=True)
+    print(f"📢 Monitor started: Alert every {THRESHOLD} samples, checking every {INTERVAL}s", flush=True)
 
     while True:
         try:
+            # בדיקה מה המצב ב-Redis עכשיו
             current_count = int(r.get('camera_samples') or 0)
             diff = current_count - last_count
-            
-            # השורה הזו היא ה"עיניים" שלנו בתוך הטרמינל
+
+            # שורת הדיבאג שתראה לך בטרמינל שהכל עובד ומסונכרן
             print(f"🔍 [DEBUG] Current: {current_count}, Last: {last_count}, Diff: {diff} (Target: {THRESHOLD})", flush=True)
 
             if diff >= THRESHOLD:
                 print(f"🔔 THRESHOLD REACHED! Sending message to {MY_CHAT_ID}", flush=True)
                 message = f"🔔 *סיכום דגימות חדשות*\nנוספו: {diff} דגימות\nסה''כ בשרת: {current_count}"
                 bot.send_message(MY_CHAT_ID, message, parse_mode='Markdown')
+                
+                # עדכון נקודת הייחוס למונה הנוכחי
                 last_count = current_count
             
             time.sleep(INTERVAL) 
         except Exception as e:
             print(f"⚠️ Monitor Error: {e}", flush=True)
-            time.sleep(10)
-
-# --- Startup ---
-
-print("🚀 Starting Background Monitor...", flush=True)
-monitor_thread = threading.Thread(target=monitor_redis_changes, daemon=True)
-monitor_thread.start()
-
-print("🚀 Starting Bot Polling...", flush=True)
-try:
-    bot.infinity_polling(skip_pending=True, timeout=60, long_polling_timeout=60)
-except Exception as e:
-    print(f"❌ Polling crashed: {e}", flush=True)
+            time.sleep(20)
