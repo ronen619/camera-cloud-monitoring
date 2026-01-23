@@ -1,34 +1,67 @@
-# Cloud-Native Real-Time Camera Monitoring System
+# 🚀 Cloud-Native IoT & Camera Monitoring System
 
-A multi-service monitoring application built to simulate real-time camera data ingestion and visualization. This project demonstrates high-availability deployment, container orchestration, and cloud infrastructure management.
+A high-performance, distributed monitoring solution designed to simulate, store, and alert on real-time camera detection events. This project demonstrates full-stack architecture, container orchestration, and cloud-native deployment strategies.
 
-## 🚀 Live Demo
-**[Insert Your Cloud IP here, e.g., http://34.165.24.21:9000]**
-*(Note: Instance may be paused to save costs)*
+---
 
-## 🛠 Tech Stack
-* **Cloud Infrastructure:** Google Cloud Platform (GCP) - Compute Engine.
-* **Orchestration:** Docker & Docker Compose.
-* **Backend:** Python (Flask).
-* **Database:** Redis (NoSQL) for real-time data persistence.
-* **Frontend:** HTML5, CSS3 (RTL support), and JavaScript (AJAX for real-time updates).
-* **OS:** Ubuntu 22.04 LTS.
+## 🏗 System Architecture
+The system follows a microservices-inspired design, ensuring scalability and isolation between components:
 
-## 🏗 Architecture
-The system follows a microservices architecture:
-1. **App Service:** A Flask-based web server that processes camera samples and provides a RESTful API.
-2. **Database Service:** A Redis instance used as a high-speed data store for counting and state management.
-3. **Connectivity:** Services communicate over a private Docker network, isolated from the public internet, with only necessary ports exposed via GCP Firewall.
+| Service | Responsibility | Tech Stack |
+| :--- | :--- | :--- |
+| **Web Dashboard** | Real-time visualization of camera status | Flask, JavaScript (AJAX), HTML5/CSS3 |
+| **Intelligent Bot** | Multi-threaded alerting & user interaction | Python (Telebot), Threading |
+| **Simulator** | High-frequency data ingestion simulation | Python, Redis-py |
+| **Database** | High-speed persistence & state management | Redis (NoSQL) |
+
+
+---
 
 ## ✨ Key Features
-* **Real-Time Updates:** Uses asynchronous JavaScript (AJAX) to fetch updates from the Redis store every 2 seconds without page refreshes.
-* **Cloud-Native Deployment:** Fully containerized and deployed on a virtualized Linux environment in the cloud.
-* **Self-Healing:** Containers are configured with restart policies to ensure maximum uptime.
-* **RTL Support:** Fully localized UI for Hebrew-speaking environments.
 
-## 🔧 How to Run Locally
-1. Clone the repository.
-2. Ensure Docker and Docker Compose are installed.
-3. Run:
+### 🖥 Real-Time Web Interface
+* **Asynchronous Updates:** Uses AJAX to fetch live data from Redis every 2 seconds, providing a seamless experience without page refreshes.
+* **Localized UI:** Fully designed with RTL (Right-to-Left) support for Hebrew-speaking environments.
+
+### 🤖 Intelligent Telegram Bot
+* **Smart Alerting Engine:** A dedicated background thread monitors data thresholds (e.g., 200+ detections) to send automated status summaries.
+* **Detailed History:** On-demand retrieval of the last 10 detection events, including unique Sequence IDs and precise timestamps.
+
+### ☁️ Cloud & Infrastructure
+* **GCP Optimized:** Deployed on Google Cloud Platform (Compute Engine) using a hardened Linux environment.
+* **Self-Healing:** Configured with Docker restart policies to ensure maximum uptime (Proven 48h+ continuous stability).
+
+---
+
+## 🛠 Technical Stack
+
+* **Infrastructure:** Google Cloud Platform (GCP), Ubuntu 22.04 LTS.
+* **Orchestration:** Docker & Docker Compose.
+* **Backend:** Python 3.9 (Flask, Telebot, Redis-py).
+* **Database:** Redis (Key-Value & Lists for chronological logging).
+* **Frontend:** HTML5, CSS3, JavaScript (AJAX).
+
+---
+
+## 🔧 Challenges & Engineering Solutions
+
+> **Challenge:** Telegram's `long-polling` is a blocking operation, which prevented the bot from monitoring Redis data in real-time.
+> **Solution:** Implemented Python `threading` to decouple the Bot UI from the Monitoring Logic, allowing concurrent execution of user commands and automated alerts.
+
+> **Challenge:** Maintaining a "Single Source of Truth" across multiple containers.
+> **Solution:** Leveraged Redis as a centralized state-store, ensuring the Simulator, Web App, and Bot always operate on synchronized data.
+
+---
+
+## 🚦 Getting Started
+
+### Prerequisites
+* Docker and Docker Compose installed.
+* A Telegram Bot Token (via BotFather).
+
+### Deployment
+1. Clone the repository to your GCP instance.
+2. Create a `.env` file with your `TELEGRAM_TOKEN`.
+3. Launch the system:
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build
