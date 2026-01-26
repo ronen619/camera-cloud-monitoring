@@ -5,7 +5,7 @@ A high-performance, distributed monitoring solution designed to simulate, store,
 ---
 
 ## 🏗 System Architecture
-The system follows a microservices-inspired design, ensuring scalability and isolation between components. All services are synchronized via a centralized Redis state-store.
+The system follows a microservices-inspired design, ensuring scalability and **Fault Isolation**. All services are synchronized via a centralized Redis state-store.
 
 | Service | Responsibility | Tech Stack |
 | :--- | :--- | :--- |
@@ -19,49 +19,48 @@ The system follows a microservices-inspired design, ensuring scalability and iso
 ## ✨ Key Features
 
 ### 🖥 Real-Time Web Interface
-* **Asynchronous Updates:** Uses AJAX to fetch live data from Redis every 2 seconds, providing a seamless experience without page refreshes.
-* **Localized UI:** Fully designed with RTL (Right-to-Left) support for Hebrew-speaking environments.
+* **Asynchronous Updates:** Uses AJAX to fetch live data from Redis every 2 seconds for a seamless experience.
+* **Localized UI:** Fully designed with RTL support for Hebrew-speaking environments.
 
 ### 🤖 Intelligent Telegram Bot
-* **Smart Alerting Engine:** A dedicated background thread monitors data thresholds (e.g., 200+ detections) to send automated status summaries.
-* **Detailed History:** On-demand retrieval of the last 10 detection events, including sequence IDs and precise timestamps.
+* **Smart Alerting Engine:** A dedicated background thread monitors thresholds (200+ detections) to send automated status summaries.
+* **Detailed History:** On-demand retrieval of the last 10 detection events with sequence IDs and timestamps.
 
 ### ☁️ Cloud & Infrastructure
-* **GCP Optimized:** Deployed on Google Cloud Platform (Compute Engine) using a hardened Linux environment.
-* **Orchestrated Deployment:** Fully managed via Docker Compose, ensuring consistent behavior across environments.
-* **Proven Stability:** Successfully tested for long-term continuous uptime (48h+ active logs).
+* **GCP Optimized:** Deployed on Google Cloud Platform using a hardened Linux environment.
+* **Docker Orchestration:** Fully managed via Docker Compose, ensuring "Infrastructure as Code" consistency.
+* **Proven Stability:** Successfully tested for long-term continuous uptime (48h+ logs).
 
 ---
 
 ## 🛠 Technical Stack
-
 * **Infrastructure:** Google Cloud Platform (GCP), Ubuntu 22.04 LTS.
 * **Orchestration:** Docker & Docker Compose.
-* **Backend:** Python 3.9-slim (Flask, Telebot, Redis-py).
-* **Database:** Redis (Key-Value & Lists for chronological logging).
-* **Frontend:** HTML5, CSS3, JavaScript (AJAX).
+* **Backend:** Python 3.9 (Flask, Telebot, Redis-py).
+* **Database:** Redis (Configured with `appendonly` for data persistence).
 
 ---
 
 ## 🔧 Challenges & Engineering Solutions
 
-> **Challenge:** Telegram's `long-polling` is a blocking operation, which prevented the bot from monitoring Redis data in real-time.
-> **Solution:** Implemented Python `threading` to decouple the Bot UI from the Monitoring Logic, allowing concurrent execution of user commands and automated alerts.
+> **Challenge:** Telegram's `long-polling` is a blocking operation, preventing the bot from monitoring data in real-time.
+> **Solution:** Implemented Python **Multithreading** to decouple the Bot UI from the Monitoring Logic, allowing concurrent execution of alerts and commands.
 
-> **Challenge:** Maintaining a "Single Source of Truth" across multiple containers.
-> **Solution:** Leveraged Redis as a centralized state-store, ensuring the Simulator, Web App, and Bot always operate on synchronized data.
+---
+
+## 🚀 Future Roadmap: Phase 2 (AI-Powered Insights)
+
+* **Vision AI Integration:** Upgrading the simulator to use Object Detection models (e.g., YOLO or OpenAI Vision) to analyze camera content in real-time.
+* **Anomaly Detection:** Implementing Machine Learning to identify unusual patterns (e.g., sudden spikes in activity) and trigger priority alerts.
+* **Advanced Analytics:** Integrating **Grafana & Prometheus** for professional visualization of system health and detection trends.
+* **Security Hardening:** Implementing a Reverse Proxy (Nginx) and SSL/TLS encryption for the web dashboard.
 
 ---
 
 ## 🚦 Getting Started
-
-### Prerequisites
-* Docker and Docker Compose installed.
-* A Telegram Bot Token (via BotFather).
-
-### Deployment
 1. Clone the repository to your GCP instance.
-2. Set your environment variables (`TELEGRAM_TOKEN`, `CHAT_ID`).
-3. Launch the system:
-   ```bash
-   docker compose up -d --build
+2. Set environment variables (`TELEGRAM_TOKEN`, `CHAT_ID`).
+3. Run: `docker compose up -d --build`
+
+## 🚀 Live Demo
+**[http://34.165.24.21:5000]**
